@@ -295,6 +295,9 @@ def present(name,
             lshad = __salt__['shadow.info'](name)
         pre = __salt__['user.info'](name)
         for key, val in changes.items():
+            if key == 'empty_password':
+                __salt__['shadow.del_password'](name)
+                continue
             if key == 'passwd':
                 __salt__['shadow.set_password'](name, password)
                 continue
@@ -368,14 +371,16 @@ def present(name,
                                 createhome=createhome):
             ret['comment'] = 'New user {0} created'.format(name)
             ret['changes'] = __salt__['user.info'](name)
-            if all((password, 'shadow.info' in __salt__)):
-                __salt__['shadow.set_password'](name, password, False, empty_password)
+            if all((password, 'shadow.info' in __salt__)) and not empty_password:
+                __salt__['shadow.set_password'](name, password)
                 spost = __salt__['shadow.info'](name)
                 if spost['passwd'] != password and not salt.utils.is_windows():
                     ret['comment'] = 'User {0} created but failed to set' \
                                      ' password to {1}'.format(name, password)
                     ret['result'] = False
                 ret['changes']['password'] = password
+            if empty_password:
+                __salt__['shadow.del_password'](name)
         else:
             ret['comment'] = 'Failed to create new user {0}'.format(name)
             ret['result'] = False
