@@ -53,6 +53,7 @@ def _changes(name,
              home=None,
              password=None,
              enforce_password=True,
+             empty_password=False,
              shell=None,
              fullname='',
              roomnumber='',
@@ -134,6 +135,7 @@ def present(name,
             createhome=True,
             password=None,
             enforce_password=True,
+            empty_password=False,
             shell=None,
             unique=True,
             system=False,
@@ -273,6 +275,7 @@ def present(name,
                        home,
                        password,
                        enforce_password,
+                       empty_password,
                        shell,
                        fullname,
                        roomnumber,
@@ -326,6 +329,7 @@ def present(name,
                            home,
                            password,
                            enforce_password,
+                           empty_password,
                            shell,
                            fullname,
                            roomnumber,
@@ -365,7 +369,7 @@ def present(name,
             ret['comment'] = 'New user {0} created'.format(name)
             ret['changes'] = __salt__['user.info'](name)
             if all((password, 'shadow.info' in __salt__)):
-                __salt__['shadow.set_password'](name, password)
+                __salt__['shadow.set_password'](name, password, False, empty_password)
                 spost = __salt__['shadow.info'](name)
                 if spost['passwd'] != password and not salt.utils.is_windows():
                     ret['comment'] = 'User {0} created but failed to set' \

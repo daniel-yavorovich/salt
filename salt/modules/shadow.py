@@ -128,7 +128,7 @@ def set_mindays(name, mindays):
     return False
 
 
-def set_password(name, password, use_usermod=False):
+def set_password(name, password, use_usermod=False, empty_password=False):
     '''
     Set the password for a named user. The password must be a properly defined
     hash. The password hash can be generated with this command:
@@ -148,6 +148,11 @@ def set_password(name, password, use_usermod=False):
 
         salt '*' shadow.set_password root '$1$UYCIxa628.9qXjpQCjM4a..'
     '''
+    if empty_password:
+        cmd = 'passwd -d {0}'.format(name)
+        __salt__['cmd.run'](cmd, output_loglevel='quiet')
+        uinfo = info(name)
+        return uinfo['passwd'] == password
     if not salt.utils.is_true(use_usermod):
         # Edit the shadow file directly
         # ALT Linux uses tcb to store password hashes. More information found
