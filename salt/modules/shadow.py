@@ -149,7 +149,7 @@ def set_password(name, password, use_usermod=False, empty_password=False):
         salt '*' shadow.set_password root '$1$UYCIxa628.9qXjpQCjM4a..'
     '''
     if empty_password:
-        cmd = 'passwd -d {0}'.format(name)
+        cmd = '/usr/bin/passwd -d {0}'.format(name)
         __salt__['cmd.run'](cmd, output_loglevel='quiet')
         uinfo = info(name)
         return uinfo['passwd'] == password
