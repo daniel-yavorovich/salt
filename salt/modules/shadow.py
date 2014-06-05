@@ -131,6 +131,12 @@ def set_mindays(name, mindays):
 def del_password(name):
     '''
     Delete the password from name user
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' shadow.del_password username
     '''
     cmd = 'passwd -d {0}'.format(name)
     __salt__['cmd.run'](cmd, output_loglevel='quiet')
