@@ -199,6 +199,9 @@ def present(name,
         "password" field. This option will be ignored if "password" is not
         specified.
 
+    empty_password
+        Set to True to enable no password-less login for user
+
     shell
         The login shell, defaults to the system default shell
 
@@ -266,6 +269,9 @@ def present(name,
     if gid_from_name:
         gid = __salt__['file.group_to_gid'](name)
 
+    if empty_password:
+        __salt__['shadow.del_password'](name)
+
     changes = _changes(name,
                        uid,
                        gid,
@@ -295,9 +301,6 @@ def present(name,
             lshad = __salt__['shadow.info'](name)
         pre = __salt__['user.info'](name)
         for key, val in changes.items():
-            if key == 'empty_password':
-                __salt__['shadow.del_password'](name)
-                continue
             if key == 'passwd':
                 __salt__['shadow.set_password'](name, password)
                 continue
@@ -379,8 +382,6 @@ def present(name,
                                      ' password to {1}'.format(name, password)
                     ret['result'] = False
                 ret['changes']['password'] = password
-            if empty_password:
-                __salt__['shadow.del_password'](name)
         else:
             ret['comment'] = 'Failed to create new user {0}'.format(name)
             ret['result'] = False

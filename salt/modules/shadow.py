@@ -138,7 +138,7 @@ def del_password(name):
     return uinfo['passwd'] == ""
 
 
-def set_password(name, password, use_usermod=False, empty_password=False):
+def set_password(name, password, use_usermod=False):
     '''
     Set the password for a named user. The password must be a properly defined
     hash. The password hash can be generated with this command:
