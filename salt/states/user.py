@@ -301,7 +301,7 @@ def present(name,
             lshad = __salt__['shadow.info'](name)
         pre = __salt__['user.info'](name)
         for key, val in changes.items():
-            if key == 'passwd':
+            if key == 'passwd' and not empty_password:
                 __salt__['shadow.set_password'](name, password)
                 continue
             if key == 'groups':
